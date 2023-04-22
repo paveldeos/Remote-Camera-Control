@@ -14,7 +14,7 @@
     const streamId = urlParams.get('id');
   
     const video = document.getElementById('video');
-    const ws = new WebSocket(`ws://${window.location.host}?id=${streamId}`);
+    const ws = new WebSocket(`ws://${window.location.host}/viewer?id=${streamId}`);
   
     if (flvjs.isSupported()) {
         const flvPlayer = flvjs.createPlayer({

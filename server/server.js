@@ -26,22 +26,34 @@ app.get('/stream/:id', (req, res) => {
   }
 });
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
   const id = generateUniqueId();
-  clients[id] = ws;
-  console.log(`New streamer connected with id ${id}`);
+  const viewer = req.url.startsWith('/viewer');
+
+  if (viewer) {
+    console.log(`Viewer connected with id ${id}`);
+  } else {
+    clients[id] = ws;
+    console.log(`Streamer connected with id ${id}`);
+  }
 
   ws.on('message', (message) => {
-    wss.clients.forEach((client) => {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
+    if (!viewer) {
+      wss.clients.forEach((client) => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(message);
+        }
+      });
+    }
   });
 
   ws.on('close', () => {
-    console.log(`Streamer with id ${id} disconnected`);
-    delete clients[id];
+    if (viewer) {
+      console.log(`Viewer with id ${id} disconnected`);
+    } else {
+      console.log(`Streamer with id ${id} disconnected`);
+      delete clients[id];
+    }
   });
 });
 
