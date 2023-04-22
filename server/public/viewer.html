@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Viewer</title>
+</head>
+<body>
+  <video id="video" width="1280" height="720" autoplay controls></video>
+  <script src="/node_modules/flv.js/dist/flv.min.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const streamId = urlParams.get('id');
+  
+    const video = document.getElementById('video');
+    const ws = new WebSocket(`ws://${window.location.host}?id=${streamId}`);
+  
+    if (flvjs.isSupported()) {
+        const flvPlayer = flvjs.createPlayer({
+            type: 'flv',
+            isLive: true,
+            hasAudio: false,
+            hasVideo: true,
+            url: `ws://${window.location.host}?id=${streamId}`,
+            // Add the correct MIME type for FLV
+            mimeType: 'video/x-flv',
+        });
+
+        flvPlayer.on(flvjs.Events.ERROR, (error) => {
+            console.error('FLV.js error:', error);
+            flvPlayer.unload();
+            flvPlayer.detachMediaElement();
+            flvPlayer.attachMediaElement(video);
+            flvPlayer.load();
+        });
+        
+        flvPlayer.attachMediaElement(video);
+        flvPlayer.load();
+        flvPlayer.play();
+    } else {
+      console.error('FLV.js is not supported in your browser');
+    }
+  </script>  
+</body>
+</html>

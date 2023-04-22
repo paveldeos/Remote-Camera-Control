@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Video Streaming</title>
+  <style>
+    video { width: 100%; }
+  </style>
+</head>
+<body>
+  <video id="video" controls></video>
+  <script src="/node_modules/flv.js/dist/flv.min.js"></script>
+  <script>
+    const video = document.getElementById('video');
+    const flvPlayer = flvjs.createPlayer({
+      type: 'flv',
+      isLive: true,
+      hasAudio: false,
+      hasVideo: true,
+      url: 'ws://localhost:3000',
+    });
+    flvPlayer.attachMediaElement(video);
+    flvPlayer.load();
+    flvPlayer.play();
+  </script>
+</body>
+</html>
