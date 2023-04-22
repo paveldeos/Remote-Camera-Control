@@ -4,7 +4,7 @@ const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-const ws = new WebSocket('ws://localhost:3000');
+const ws = new WebSocket('ws://34.118.123.12:3000');
 
 ws.on('open', () => {
     console.log('Connected to server');
